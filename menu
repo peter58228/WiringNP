@@ -1,0 +1,55 @@
+#!/bin/bash
+
+board_model=("NanoPi-M1" "NanoPi-NEO" "NanoPi-NEO-Air" "NanoPi-M1-Plus" "NanoPi-Duo" "NanoPi-NEO-Core" "NanoPi-K1" "NanoPi-Hero" "NanoPi-Duo2" "NanoPi-R1" "NanoPi-NEO2" "NanoPi-M1-Plus2" "NanoPi-NEO-Plus2" "NanoPi-NEO-Core2" "NanoPi-K1-Plus")
+board_id=("0(0)" "1(0)" "2(0)" "3(0)" "4(0)" "5(0)" "6(0)" "7(0)" "8(0)" "9(0)" "1(0)" "3(0)" "2(0)" "0(0)" "4(0)")
+=""
+
+
+
+    clear
+    echo
+    while true
+    do
+    echo  "Please enter your board model:"
+
+
+    for ((i=1;i<=${#board_model[@]};i++ )); do
+        hint="${board_model[$i-1]}"
+        #printf ${i}") "${hint}\n
+
+        printf "%3s %s\n" ${i}")" ${hint}
+    done
+
+    read -p "Please enter a number (Default ${board_model[0]}):" selected
+    [ -z "${selected}" ] && selected="1"
+
+    case "${selected}" in
+        1|2|3|4|5|6|7|8|9|10|11|12|13|14|15)
+        echo
+        echo "You choose = ${board_model[${selected}-1]}"
+        echo
+        sys_info_content="sunxi_board_id    : "${board_id[${selected}-1]}
+        break
+        ;;
+        *)
+        echo
+        echo -e "[${red}Error${plain}] Please only enter a number [1-15]"
+        echo
+        ;;
+    esac
+    done
+    touch /etc/sys_info
+    echo "$sys_info_content" > /etc/sys_info
+
+    # test if file exist
+    if [ -f /etc/sys_info ]; then
+        cat /etc/sys_info
+    fi
+
+
+    # test if command exist.
+    if ! hash i2cdetect 2>/dev/null; then
+        echo
+        read -p "i2ctoool not fiend in system, install now? (Default ${board_model[0]}):" selected
+        apt install i2ctools -y 2>/dev/null
+    fi
